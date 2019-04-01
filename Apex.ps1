@@ -22,7 +22,7 @@ Function Hide-Console
     [Console.Window]::ShowWindow($consolePtr, 0)
 }
 
-# Set ScreenResolution
+# Set Screen Resolution
 Function Set-ScreenResolution { 
 param ( 
 [Parameter(Mandatory=$true, 
@@ -181,7 +181,7 @@ Add-Type $pinvokeCode -ErrorAction SilentlyContinue
 } 
 
 # Build/Backup/Set Apex Config Files
-Function Apex-SetConfig {
+Function Set-ApexConfig {
 	$Localautoexec = Test-Path -Path ./autoexec.cfg
 	$Remoteautoexec = Test-Path -Path ${env:ProgramFiles(x86)}'\Origin Games\Apex\cfg\autoexec.cfg'
 	If ( $Localautoexec -eq 'True' ) {
@@ -213,7 +213,7 @@ Function Apex-SetConfig {
 	}
 }
 
-Apex-SetConfig
+Set-ApexConfig
 Hide-Console
 Set-ScreenResolution -Width $ApexScreenWidth -Height $ApexScreenHeight -freq $DesktopHrz
 Start-Process -FilePath ${env:ProgramFiles(x86)}'\Origin Games\Apex\r5apex.exe' -ArgumentList $ApexLauchOption -Wait 
