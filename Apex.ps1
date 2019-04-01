@@ -213,6 +213,11 @@ Function Set-ApexConfig {
 	}
 }
 
+# Fix for Spinning Wheel
+$ApexBadFile = Test-Path -Path $env:USERPROFILE'\Saved Games\Respawn\Apex\local\previousgamestate.txt'
+If ( $ApexBadFile -eq 'True' ) {
+	Remove-Item -Path $env:USERPROFILE'\Saved Games\Respawn\Apex\local\previousgamestate.txt'
+}
 Set-ApexConfig
 Hide-Console
 Set-ScreenResolution -Width $ApexScreenWidth -Height $ApexScreenHeight -freq $DesktopHrz
