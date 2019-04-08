@@ -1,11 +1,11 @@
 # Script Vars
-$ApexLauchOption = '-novid -refresh 60 +exec autoexec -preload +fps_max unlimited -threads 4 -forcenovsync -high -window -noborder'
+$ApexLauchOptions = '-novid -refresh 50 +exec autoexec -preload +fps_max unlimited -threads 4 -forcenovsync -high -window -noborder'
 $DesktopHrz = 60
 $DesktopWidth = 1920
 $DesktopHeight = 1080
+$ApexHrz = 50
 $ApexScreenWidth = 1280
 $ApexScreenHeight = 720
-
 
 # .Net Hide Console
 Add-Type -Name Window -Namespace Console -MemberDefinition '
@@ -187,6 +187,7 @@ Function Set-ApexConfig {
 	If ( $Localautoexec -eq 'True' ) {
 		Write-Host 'Copying autoexec.cfg'
 		Copy-Item  .\autoexec.cfg -Destination ${env:ProgramFiles(x86)}'\Origin Games\Apex\cfg\' -Recurse -Force
+		Copy-Item  .\vidsettings.cfg -Destination ${env:ProgramFiles(x86)}'\Origin Games\Apex\cfg\' -Recurse -Force
 	}
 	Else {
 		If ( $Remoteautoexec  -eq 'True' ) {
@@ -197,6 +198,7 @@ Function Set-ApexConfig {
 			Write-Host 'Creating autoexec.cfg'
 			New-Item -ItemType file ./autoexec.cfg
 			Copy-Item  .\autoexec.cfg -Destination ${env:ProgramFiles(x86)}'\Origin Games\Apex\cfg\' -Recurse -Force
+			Copy-Item  .\vidsettings.cfg -Destination ${env:ProgramFiles(x86)}'\Origin Games\Apex\cfg\' -Recurse -Force
 		}
 	}
 	$LocalApex = Test-Path -Path ./Apex
@@ -213,13 +215,42 @@ Function Set-ApexConfig {
 	}
 }
 
+# Change Cursor
+$RegConnect = [Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey([Microsoft.Win32.RegistryHive]"CurrentUser", "$env:COMPUTERNAME")
+$RegCursors = $RegConnect.OpenSubKey("Control Panel\Cursors", $true)
+$RegCursors.SetValue("Arrow", "%USERPROFILE%\Desktop\Apex Config\Crosshair Precision Select.ani")
+$RegCursors.Close()
+$RegConnect.Close()
+$CSharpSig = @'
+[DllImport("user32.dll", SetLastError = true, EntryPoint = "SystemParametersInfo")]
+[return: MarshalAs(UnmanagedType.Bool)]
+public static extern bool SystemParametersInfo(
+                 uint uiAction,
+                 uint uiParam,
+                 bool pvParam,
+                 uint fWinIni);
+'@
+
+$CursorRefresh = Add-Type -MemberDefinition $CSharpSig -Name WinAPICall -Namespace SystemParamInfo -Passthru
+$CursorRefresh::SystemParametersInfo(0x0057, 0, $null, 0)
+
 # Fix for Spinning Wheel
 $ApexBadFile = Test-Path -Path $env:USERPROFILE'\Saved Games\Respawn\Apex\local\previousgamestate.txt'
 If ( $ApexBadFile -eq 'True' ) {
 	Remove-Item -Path $env:USERPROFILE'\Saved Games\Respawn\Apex\local\previousgamestate.txt'
 }
+
+# Main Script To Start Apex
 Set-ApexConfig
 Hide-Console
-Set-ScreenResolution -Width $ApexScreenWidth -Height $ApexScreenHeight -freq $DesktopHrz
-Start-Process -FilePath ${env:ProgramFiles(x86)}'\Origin Games\Apex\r5apex.exe' -ArgumentList $ApexLauchOption -Wait 
+Set-ScreenResolution -Width $ApexScreenWidth -Height $ApexScreenHeight -freq $ApexHrz
+Start-Process -FilePath ${env:ProgramFiles(x86)}'\Origin Games\Apex\r5apex.exe' -ArgumentList $ApexLauchOptions -Wait 
 Set-ScreenResolution -Width $DesktopWidth -Height $DesktopHeight -freq $DesktopHrz
+
+# Reset Cursor
+$RegConnect = [Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey([Microsoft.Win32.RegistryHive]"CurrentUser", "$env:COMPUTERNAME")
+$RegCursors = $RegConnect.OpenSubKey("Control Panel\Cursors", $true)
+$RegCursors.SetValue("Arrow", "%SystemRoot%\cursors\aero_arrow.cur")
+$RegCursors.Close()
+$RegConnect.Close()
+$CursorRefresh::SystemParametersInfo(0x0057, 0, $null, 0)
