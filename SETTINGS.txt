@@ -1,9 +1,0 @@
-[General]
-ApexLauchOptions = '-novid -refresh 60 +exec autoexec -preload +fps_max unlimited -threads 4 -forcenovsync -high -window -noborder'
-
-[Resolution]
-DesktopHrz = 60
-DesktopWidth = 1920
-DesktopHeight = 1080
-ApexScreenWidth = 1280
-ApexScreenHeight = 720

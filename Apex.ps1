@@ -1,90 +1,23 @@
 # Script Vars
-$ApexLauchOptions = '-novid -refresh 50 +exec autoexec -preload +fps_max unlimited -threads 4 -forcenovsync -high -window -noborder'
+## Apex Launch Options
+$ApexLauchOptions = '-novid -refresh 60 +exec autoexec -preload +fps_max unlimited -threads 4 -forcenovsync -high -window -noborder'
+## Desktop Resolution and Hrz
 $DesktopHrz = 60
 $DesktopWidth = 1920
 $DesktopHeight = 1080
-$ApexHrz = 50
+## Apex Resolution and Hrz
+$ApexHrz = 60
 $ApexScreenWidth = 1280
 $ApexScreenHeight = 720
 
-#Set Window Locations For Streaming
-Function Set-Window {
-	[OutputType('System.Automation.WindowInfo')]
-    [cmdletbinding()]
-    Param (
-        [parameter(ValueFromPipelineByPropertyName=$True)]
-        $ProcessName,
-        [int]$X,
-        [int]$Y,
-        [int]$Width,
-        [int]$Height,
-        [switch]$Passthru
-    )
-    Begin {
-        Try{
-            [void][Window]
-        } Catch {
-        Add-Type @"
-              using System;
-              using System.Runtime.InteropServices;
-              public class Window {
-                [DllImport("user32.dll")]
-                [return: MarshalAs(UnmanagedType.Bool)]
-                public static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
 
-                [DllImport("user32.dll")]
-                public extern static bool MoveWindow(IntPtr handle, int x, int y, int width, int height, bool redraw);
-              }
-              public struct RECT
-              {
-                public int Left;        // x position of upper-left corner
-                public int Top;         // y position of upper-left corner
-                public int Right;       // x position of lower-right corner
-                public int Bottom;      // y position of lower-right corner
-              }
-"@
-        }
-    }
-    Process {
-        $Rectangle = New-Object RECT
-        $Handles = (Get-Process -Name $ProcessName).MainWindowHandle   ### 1.1//JosefZ
-        foreach ( $Handle in $Handles ) {                              ### 1.1//JosefZ
-            if ( $Handle -eq [System.IntPtr]::Zero ) { Continue }      ### 1.1//JosefZ
-            $Return = [Window]::GetWindowRect($Handle,[ref]$Rectangle)
-            If (-NOT $PSBoundParameters.ContainsKey('Width')) {            
-                $Width = $Rectangle.Right - $Rectangle.Left            
-            }
-            If (-NOT $PSBoundParameters.ContainsKey('Height')) {
-                $Height = $Rectangle.Bottom - $Rectangle.Top
-            }
-            If ($Return) {
-                $Return = [Window]::MoveWindow($Handle, $x, $y, $Width, $Height,$True)
-            }
-            If ($PSBoundParameters.ContainsKey('Passthru')) {
-                $Rectangle = New-Object RECT
-                $Return = [Window]::GetWindowRect($Handle,[ref]$Rectangle)
-                If ($Return) {
-                    $Height = $Rectangle.Bottom - $Rectangle.Top
-                    $Width = $Rectangle.Right - $Rectangle.Left
-                    $Size = New-Object System.Management.Automation.Host.Size -ArgumentList $Width, $Height
-                    $TopLeft = New-Object System.Management.Automation.Host.Coordinates -ArgumentList $Rectangle.Left, $Rectangle.Top
-                    $BottomRight = New-Object System.Management.Automation.Host.Coordinates -ArgumentList $Rectangle.Right, $Rectangle.Bottom
-                    If ($Rectangle.Top -lt 0 -AND $Rectangle.LEft -lt 0) {
-                        Write-Warning "Window is minimized! Coordinates will not be accurate."
-                    }
-                    $Object = [pscustomobject]@{
-                        ProcessName = $ProcessName
-                        Size = $Size
-                        TopLeft = $TopLeft
-                        BottomRight = $BottomRight
-                    }
-                    $Object.PSTypeNames.insert(0,'System.Automation.WindowInfo')
-                    $Object            
-                }
-            }
-        }
-    }
+#Set Window Locations For Streaming
+function Get-ScriptDirectory
+{
+  $Invocation = (Get-Variable MyInvocation -Scope 1).Value
+  Split-Path $Invocation.MyCommand.Path
 }
+$ScriptPWD = Get-ScriptDirectory
 
 # .Net Hide Console
 Add-Type -Name Window -Namespace Console -MemberDefinition '
@@ -297,7 +230,7 @@ Function Set-ApexConfig {
 # Change Cursor
 $RegConnect = [Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey([Microsoft.Win32.RegistryHive]"CurrentUser", "$env:COMPUTERNAME")
 $RegCursors = $RegConnect.OpenSubKey("Control Panel\Cursors", $true)
-$RegCursors.SetValue("Arrow", "%USERPROFILE%\Desktop\Apex Config\Crosshair Precision Select.ani")
+$RegCursors.SetValue("Arrow", $ScriptPWD"\Crosshair Precision Select.ani")
 $RegCursors.Close()
 $RegConnect.Close()
 $CSharpSig = @'
@@ -313,7 +246,7 @@ public static extern bool SystemParametersInfo(
 $CursorRefresh = Add-Type -MemberDefinition $CSharpSig -Name WinAPICall -Namespace SystemParamInfo -Passthru
 $CursorRefresh::SystemParametersInfo(0x0057, 0, $null, 0)
 
-# Fix for Spinning Wheel
+# Fix for Spinning Wheel (Deletes a Temp File of previusgamestate.txt Forcing Apex to autodetect the Data Center everytime)
 $ApexBadFile = Test-Path -Path $env:USERPROFILE'\Saved Games\Respawn\Apex\local\previousgamestate.txt'
 If ( $ApexBadFile -eq 'True' ) {
 	Remove-Item -Path $env:USERPROFILE'\Saved Games\Respawn\Apex\local\previousgamestate.txt'
@@ -323,14 +256,8 @@ If ( $ApexBadFile -eq 'True' ) {
 Set-ApexConfig
 Hide-Console
 Set-ScreenResolution -Width $ApexScreenWidth -Height $ApexScreenHeight -freq $ApexHrz
-Set-Window -ProcessName discord -X 1573 -Y 40 -Width 1310 -Height 690
-Set-Window -ProcessName spotify -X 1280 -Y 40 -Width 1365 -Height 690
-Set-Window -ProcessName obs64 -X 1280 -Y 640 -Width 1613 -Height 264
 Start-Process -FilePath ${env:ProgramFiles(x86)}'\Origin Games\Apex\r5apex.exe' -ArgumentList $ApexLauchOptions -Wait 
 Set-ScreenResolution -Width $DesktopWidth -Height $DesktopHeight -freq $DesktopHrz
-Set-Window -ProcessName discord -X 2213 -Y 40 -Width 1310 -Height 690
-Set-Window -ProcessName spotify -X 1920 -Y 40 -Width 1365 -Height 690
-Set-Window -ProcessName obs64 -X 1920 -Y 640 -Width 1613 -Height 264
 
 # Reset Cursor
 $RegConnect = [Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey([Microsoft.Win32.RegistryHive]"CurrentUser", "$env:COMPUTERNAME")
