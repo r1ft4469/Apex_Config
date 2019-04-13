@@ -230,7 +230,7 @@ Function Set-ApexConfig {
 # Change Cursor
 $RegConnect = [Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey([Microsoft.Win32.RegistryHive]"CurrentUser", "$env:COMPUTERNAME")
 $RegCursors = $RegConnect.OpenSubKey("Control Panel\Cursors", $true)
-$RegCursors.SetValue("Arrow", $ScriptPWD"\Crosshair Precision Select.ani")
+$RegCursors.SetValue("Arrow", $ScriptPWD+"\Crosshair Precision Select.ani")
 $RegCursors.Close()
 $RegConnect.Close()
 $CSharpSig = @'
