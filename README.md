@@ -11,3 +11,5 @@
 * Reload Config with `~`
 * Netgraph Toggle `F10`
 * Screenshot is on P `C:\Program Files (x86)\Origin Games\Apex\r2\screenshots`
+
+## Video Settings are VERY LOW but also makes weapon bloom alot more managable
