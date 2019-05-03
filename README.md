@@ -8,7 +8,6 @@
 * Always Run Hold `Caps` to Walk
 * Reload Config with `~`
 * Netgraph Toggle `F10`
-* Screenshot is on P `C:\Program Files (x86)\Origin Games\Apex\r2\screenshots`
 
 ## Sanitized Version 
 * Netgraph Toggle `F10`
