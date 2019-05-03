@@ -16,3 +16,14 @@
 * Disconnect `F12`
 
 ## Video Settings are VERY LOW but also makes weapon bloom alot more managable
+
+## Credits
+Multiple reddit post and also githubs. Check out these other configs lots of good examples!
+
+https://github.com/kALLEBALIK/Apex-config
+
+https://github.com/IY/RatzAutoexec
+
+https://github.com/240hz/ApexConfigs
+
+https://github.com/NotTsunami/ApexConfig
