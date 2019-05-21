@@ -1,6 +1,6 @@
 # Apex Legends Config Files
 * Put autoexec.cfg in `Origin Games\Apex\cfg`
-* Launch Options `-novid -refresh 60 +exec autoexec -preload +fps_max unlimited -threads 4 -forcenovsync -high -full`
+* Launch Options `-novid -refresh 60 +exec autoexec -preload +fps_max unlimited -threads 4 -forcenovsync -high -fullscreen`
 * Change Options in Config or Use Sanitized Version
 
 ## Alias Included
