@@ -5,7 +5,7 @@
 
 ## Alias Included
 * `Mouse1` is Attack and Ping Enemy
-* Always Run Hold `Left Shift` to Walk
+* Always Run Hold `LSHIFT` to Walk
 * Reload Config with `~`
 * Netgraph Toggle `F10`
 * Null Movement Script
