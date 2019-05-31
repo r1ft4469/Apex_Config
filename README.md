@@ -4,8 +4,7 @@
 * Change Options in Config or Use Sanitized Version
 
 ## Alias Included
-* `Mouse1` is Attack and Ping Enemy
-* Always Run Hold `LSHIFT` to Walk
+* Always Run Hold `LSHIFT` to Walk and Strafe Alternating between left and right
 * Reload Config with `~`
 * Netgraph Toggle `F10`
 * Null Movement Script
