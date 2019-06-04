@@ -4,7 +4,7 @@
 * Change Options in Config or Use Sanitized Version
 
 ## Alias Included
-* Always Run Hold `LSHIFT` to Walk and Strafe Alternating between left and right
+* Always Run Hold `LSHIFT` to Walk
 * Reload Config with `~`
 * Netgraph Toggle `F10`
 * Null Movement Script
