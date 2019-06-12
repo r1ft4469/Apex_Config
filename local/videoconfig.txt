@@ -24,7 +24,7 @@
 	"setting.dvs_enable"		"0"
 	"setting.dvs_gpuframetime_min"		"15000"
 	"setting.dvs_gpuframetime_max"		"16500"
-	"setting.defaultres"		"1920"
+	"setting.defaultres"		"1440"
 	"setting.defaultresheight"		"1080"
 	"setting.fullscreen"		"1"
 	"setting.nowindowborder"		"0"
